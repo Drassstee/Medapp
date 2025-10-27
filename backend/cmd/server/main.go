@@ -1,8 +1,10 @@
 package main
 
 import (
-	"medapp/api"
+	"log"
+	"medapp/internal/api"
 	"medapp/internal/db"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,5 +13,12 @@ func main() {
 	r := gin.Default()
 	db.ConnectDB()
 	api.RegisterRoutes(r)
-	r.Run(":8080")
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	log.Println("Back starting on ", port)
+	if err := r.Run(":" + port); err != nil {
+		log.Fatal(err)
+	}
 }

@@ -13,10 +13,10 @@ var DB *gorm.DB
 
 func ConnectDB() {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sllmode=disable",
+		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable",
 		getEnv("DB_HOST", "localhost"),
-		getEnv("DB_USER", "postgres"),
-		getEnv("DB_PASSWORD", "password"),
+		getEnv("DB_USER", "Alib"),
+		getEnv("DB_PASSWORD", "1507"),
 		getEnv("DB_NAME", "medapp"),
 		getEnv("DB_PORT", "5432"),
 	)

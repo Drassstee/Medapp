@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-import random
+
+from math import exp
 
 router = APIRouter(prefix="/predict", tags=["Predict"])
 
@@ -11,7 +12,22 @@ class Symptoms(BaseModel):
 
 @router.post("/")
 def predict(symptoms: Symptoms):
-    # I will replace here with model
-    risk_score = random.uniform(0, 1)
-    result = "Likely Sick" if risk_score > 0.5 else "Healthy"
-    return {"prediction": result, "confidence": round(risk_score, 2)}
+    coefficients = {
+        "intercept": -1.2,
+        "fever": 1.5,
+        "cough": 0.9,
+        "headache": 0.6,
+    }
+
+    linear_sum = coefficients["intercept"]
+    if symptoms.fever:
+        linear_sum += coefficients["fever"]
+    if symptoms.cough:
+        linear_sum += coefficients["cough"]
+    if symptoms.headache:
+        linear_sum += coefficients["headache"]
+
+    probability = 1 / (1 + exp(-linear_sum))
+    prediction = "Likely Sick" if probability >= 0.5 else "Low Risk"
+
+    return {"prediction": prediction, "confidence": round(probability, 2)}

@@ -7,6 +7,7 @@ import (
 	"medapp/internal/api/auth"
 	"medapp/internal/api/home"
 	"medapp/internal/api/ml"
+	"medapp/internal/api/patient"
 	"medapp/internal/api/user"
 	"medapp/internal/api/video"
 
@@ -22,6 +23,7 @@ func RegisterRoutes(r *gin.Engine) {
 		appointment.RegisterRoutes(api.Group("/appointments"))
 		ml.RegisterRoutes(api.Group("/ml"))
 		user.RegisterRoutes(api.Group("/users"))
+		patient.RegisterRoutes(api.Group("/patients"))
 		api.GET("/status", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{"message": "MedApp Backend Running"})
 		})

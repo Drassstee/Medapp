@@ -9,6 +9,9 @@ import RegisterPage from "./pages/RegisterPage";
 import VideoLibrary from "./pages/VideoLibrary";
 import DoctorDashboard from "./pages/DoctorDashboard";
 import PatientDashboard from "./pages/PatientDashboard";
+import AssignPatientPage from "./pages/AssignPatientPage";
+import PatientInfoPage from "./pages/PatientInfoPage";
+import PatientDatabasePage from "./pages/PatientDatabasePage";
 import { useAuth } from "./hooks/useAuth";
 
 const DashboardEntry = () => {
@@ -39,6 +42,11 @@ const App = () => (
     <Route element={<ProtectedRoute roles={["doctor"]} />}>
       <Route path="dashboard/doctor" element={<DashboardLayout />}>
         <Route index element={<DoctorDashboard />} />
+      </Route>
+      <Route path="dashboard/patients" element={<DashboardLayout />}>
+        <Route index element={<PatientDatabasePage />} />
+        <Route path="assign" element={<AssignPatientPage />} />
+        <Route path="info" element={<PatientInfoPage />} />
       </Route>
     </Route>
 

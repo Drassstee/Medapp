@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:8080/api";
+// Use relative URL in development (Vite proxy) or absolute URL from env
+const API_BASE_URL = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? "/api" : "http://localhost:8080/api");
 
 let authToken: string | null = localStorage.getItem("medapp_token");
 

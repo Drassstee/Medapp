@@ -32,9 +32,13 @@ type User struct {
 
 	DoctorProfile         *DoctorProfile  `json:"doctorProfile,omitempty"`
 	PatientProfile        *PatientProfile `json:"patientProfile,omitempty"`
-	Videos                []Video         `json:"videos,omitempty" gorm:"foreignKey:UploaderID"`
-	AppointmentsAsDoctor  []Appointment   `gorm:"foreignKey:DoctorID" json:"-"`
-	AppointmentsAsPatient []Appointment   `gorm:"foreignKey:PatientID" json:"-"`
+	Videos                []Video              `json:"videos,omitempty" gorm:"foreignKey:UploaderID"`
+	AppointmentsAsDoctor  []Appointment        `gorm:"foreignKey:DoctorID" json:"-"`
+	AppointmentsAsPatient []Appointment        `gorm:"foreignKey:PatientID" json:"-"`
+	DoctorPatients        []DoctorPatient      `gorm:"foreignKey:DoctorID" json:"-"`
+	PatientDoctors         []DoctorPatient      `gorm:"foreignKey:PatientID" json:"-"`
+	MedicalInfo            *PatientMedicalInfo   `gorm:"foreignKey:PatientID" json:"medicalInfo,omitempty"`
+	MedicalInfoCreated    []PatientMedicalInfo  `gorm:"foreignKey:DoctorID" json:"-"`
 }
 
 type DoctorProfile struct {
@@ -93,4 +97,38 @@ type Appointment struct {
 	Notes       string            `gorm:"type:text" json:"notes"`
 	Doctor      *User             `json:"doctor,omitempty"`
 	Patient     *User             `json:"patient,omitempty"`
+}
+
+// DoctorPatient represents the many-to-many relationship between doctors and patients
+type DoctorPatient struct {
+	ID        uint      `gorm:"primaryKey" json:"id"`
+	CreatedAt time.Time `json:"createdAt"`
+	DoctorID  uint      `gorm:"index" json:"doctorId"`
+	PatientID uint      `gorm:"index" json:"patientId"`
+	Doctor    *User     `json:"doctor,omitempty" gorm:"constraint:OnDelete:CASCADE"`
+	Patient   *User     `json:"patient,omitempty" gorm:"constraint:OnDelete:CASCADE"`
+}
+
+// PatientMedicalInfo stores medical information filled by doctors
+type PatientMedicalInfo struct {
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UpdatedAt   time.Time `json:"updatedAt"`
+	PatientID   uint      `gorm:"uniqueIndex" json:"patientId"`
+	DoctorID    uint      `gorm:"index" json:"doctorId"` // Doctor who filled this info
+	Gender      string    `gorm:"size:50" json:"gender"`
+	AgeGroup    string    `gorm:"size:50" json:"ageGroup"` // e.g., "0-18", "19-35", "36-50", "51-65", "65+"
+	DiseaseIDs  string    `gorm:"type:text" json:"-"`      // JSON array of disease IDs
+	Diseases    []Disease `gorm:"many2many:patient_medical_info_diseases;" json:"diseases"`
+	Patient     *User     `json:"patient,omitempty" gorm:"constraint:OnDelete:CASCADE"`
+	Doctor      *User     `json:"doctor,omitempty" gorm:"constraint:OnDelete:SET NULL"`
+}
+
+// Disease represents a chronic or other disease
+type Disease struct {
+	ID          uint      `gorm:"primaryKey" json:"id"`
+	CreatedAt   time.Time `json:"createdAt"`
+	Name        string    `gorm:"size:255;uniqueIndex;not null" json:"name"`
+	Category    string    `gorm:"size:100" json:"category"` // e.g., "Chronic", "Infectious", "Genetic"
+	Description string    `gorm:"type:text" json:"description"`
 }

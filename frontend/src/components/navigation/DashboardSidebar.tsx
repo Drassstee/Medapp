@@ -4,6 +4,9 @@ import {
   IconDashboard,
   IconPlayerPlay,
   IconStethoscope,
+  IconUserPlus,
+  IconFileText,
+  IconDatabase,
 } from "@tabler/icons-react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuthContext } from "../../context/AuthContext";
@@ -32,6 +35,14 @@ const DashboardSidebar = () => {
 
   if (user?.role === "patient") {
     links.push({ label: "Our Doctors", to: "/dashboard/doctors", icon: IconStethoscope });
+  }
+
+  if (user?.role === "doctor") {
+    links.push(
+      { label: "Assign Patient", to: "/dashboard/patients/assign", icon: IconUserPlus },
+      { label: "Patient Info", to: "/dashboard/patients/info", icon: IconFileText },
+      { label: "Patient Database", to: "/dashboard/patients", icon: IconDatabase }
+    );
   }
 
   return (
